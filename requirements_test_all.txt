@@ -2086,6 +2086,9 @@ rflink==0.0.66
 # homeassistant.components.ring
 ring-doorbell==0.9.13
 
+# homeassistant.components.rointe
+rointe-sdk==1.5.0
+
 # homeassistant.components.roku
 rokuecp==0.19.3
 
