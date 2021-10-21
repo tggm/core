@@ -957,6 +957,8 @@ build.json @home-assistant/supervisor
 /tests/components/rituals_perfume_genie/ @milanmeu
 /homeassistant/components/rmvtransport/ @cgtobi
 /tests/components/rmvtransport/ @cgtobi
+/homeassistant/components/rointe/ @tggm
+/tests/components/rointe/ @tggm
 /homeassistant/components/roku/ @ctalkington
 /tests/components/roku/ @ctalkington
 /homeassistant/components/roomba/ @pschmitt @cyr-ius @shenxn
