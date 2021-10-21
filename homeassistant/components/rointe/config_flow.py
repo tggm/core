@@ -8,6 +8,7 @@ from rointesdk.rointe_api import RointeAPI
 import voluptuous as vol
 
 from homeassistant import config_entries
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.data_entry_flow import FlowResult
 
 from .const import (
@@ -37,6 +38,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle the config flow for Rointe Heaters."""
 
     VERSION = 1
+    reauth_entry: ConfigEntry | None = None
 
     def __init__(self) -> None:
         """Config flow init."""
@@ -131,3 +133,19 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="installation", data_schema=step_schema, errors=errors
         )
+
+    async def async_step_reauth(self, user_input=None):
+        """Perform reauth upon an API authentication error."""
+        self.reauth_entry = self.hass.config_entries.async_get_entry(
+            self.context["entry_id"]
+        )
+        return await self.async_step_reauth_confirm()
+
+    async def async_step_reauth_confirm(self, user_input=None):
+        """Dialog that informs the user that reauth is required."""
+        if user_input is None:
+            return self.async_show_form(
+                step_id="user",
+                data_schema=STEP_USER_DATA_SCHEMA,
+            )
+        return await self.async_step_user()

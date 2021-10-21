@@ -7,7 +7,8 @@ from rointesdk.rointe_api import ApiResponse, RointeAPI
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
+
+from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
 
 from .const import (
     CONF_INSTALLATION,
@@ -47,7 +48,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         _LOGGER.error("Config entry not ready in async_setup_entry")
         raise ConfigEntryNotReady("Unable to connect to Rointe API.")
 
-    return bool(success)
+    return success
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -83,7 +84,8 @@ async def init_device_manager(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         _LOGGER.error(
             "Unable to authenticate to Rointe API: %s", login_result.error_message
         )
-        return False
+
+        raise ConfigEntryAuthFailed("Unable to authenticate to Rointe API")
 
     rointe_device_manager = RointeDeviceManager(
         username=entry.data[CONF_USERNAME],

@@ -19,6 +19,7 @@ from homeassistant.components.climate import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import TEMP_CELSIUS
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -215,6 +216,10 @@ class RointeHaClimate(RointeRadiatorEntity, ClimateEntity):
                 self._radiator.name,
             )
 
+            raise HomeAssistantError(
+                f"Failed to set HVAC mode for {self._radiator.name}"
+            )
+
         await self._signal_thermostat_update()
 
     async def async_set_hvac_mode(self, hvac_mode):
@@ -227,6 +232,10 @@ class RointeHaClimate(RointeRadiatorEntity, ClimateEntity):
         ):
             _LOGGER.error(
                 "Failed to set HVAC mode [%s] for [%s]", hvac_mode, self._radiator.name
+            )
+
+            raise HomeAssistantError(
+                f"Failed to set HVAC mode for {self._radiator.name}"
             )
 
         await self._signal_thermostat_update()
@@ -242,6 +251,10 @@ class RointeHaClimate(RointeRadiatorEntity, ClimateEntity):
                 "Failed to set preset mode [%s] for [%s]",
                 preset_mode,
                 self._radiator.name,
+            )
+
+            raise HomeAssistantError(
+                f"Failed to set HVAC mode for {self._radiator.name}"
             )
 
         await self._signal_thermostat_update()

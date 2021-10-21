@@ -290,7 +290,6 @@ class RointeDeviceManager:
         if not result.success:
             # Set the device as unavailable.
             device.hass_available = False
-
             return False
 
         # Update the device internal status
@@ -319,7 +318,6 @@ class RointeDeviceManager:
         if not result.success:
             # Set the device as unavailable.
             device.hass_available = False
-
             return False
 
         # Update the device's internal status
