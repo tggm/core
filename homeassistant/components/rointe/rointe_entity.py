@@ -18,7 +18,7 @@ from .device_manager import RointeDevice, RointeDeviceManager
 
 
 class RointeHAEntity(CoordinatorEntity):
-    """Rointe base HA entity."""
+    """Rointe entity base."""
 
     rointe_device: RointeDevice
     rointe_device_manager: RointeDeviceManager
@@ -31,7 +31,7 @@ class RointeHAEntity(CoordinatorEntity):
 
     def get_device_manager(self) -> RointeDeviceManager:
         """Get the device manager."""
-        return self.coordinator.device_manager  # type: ignore[attr-defined]
+        return self.coordinator.device_manager
 
     @property
     def unique_id(self):
@@ -52,7 +52,7 @@ class RointeHAEntity(CoordinatorEntity):
 
 
 class RointeRadiatorEntity(RointeHAEntity):
-    """Base class for Rointe radiators."""
+    """Base class for Rointe entities (climate and sensors)."""
 
     def __init__(
         self,

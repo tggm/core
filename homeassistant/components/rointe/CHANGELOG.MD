@@ -1,4 +1,5 @@
-# V1.0.9b1
+# V1.0.10
+* Added missing entity descriptors
 * Set the devices as unavailable if communication errors occur.
 * Configure a scan interval.
 * Raise ConfigEntryNotReady if unable to initialize from config.

@@ -1,9 +1,10 @@
 """Provides the Rointe DataUpdateCoordinator."""
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import timedelta
 import logging
-from typing import Any, Callable
+from typing import Any
 
 from rointesdk.device import RointeDevice
 
@@ -40,9 +41,6 @@ class RointeDataUpdateCoordinator(DataUpdateCoordinator[dict[str, RointeDevice]]
 
     async def _async_update_data(self) -> dict[str, RointeDevice]:
         """Fetch data from API."""
-
-        # TODO: Maybe a lock ?
-        # TODO: Maybe a try-catch.?
 
         devices = await self.device_manager.update()
 

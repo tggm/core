@@ -58,7 +58,7 @@ class RointeDeviceManager:
                 device.hass_available = False
 
     async def update(self) -> dict[str, Any]:
-        """Retrieve the devices from the users installation."""
+        """Retrieve the devices from the user's installation."""
 
         installation_response: ApiResponse = await self.hass.async_add_executor_job(
             self.rointe_api.get_installation_by_id, self.installation_id, self.local_id
@@ -73,8 +73,8 @@ class RointeDeviceManager:
             return {}
 
         installation = installation_response.data
-
         discovered_devices: dict[str, RointeDevice] = {}
+        firmware_map = self._get_firmware_map()
 
         for zone_key in installation["zones"]:
             zone = installation["zones"][zone_key]
@@ -107,8 +107,15 @@ class RointeDeviceManager:
                     else:
                         energy_data = None
 
+                    if firmware_map:
+                        # TODO. Determine DeviceFirmware from data and index map.
+                        pass
+
                     new_devices = self._add_or_update_device(
-                        device_data_response.data, energy_data, device_id
+                        # TODO. Pass fw data as argument here.
+                        device_data_response.data,
+                        energy_data,
+                        device_id,
                     )
 
                     if new_devices:
@@ -125,6 +132,17 @@ class RointeDeviceManager:
                     devices[device_id].hass_available = False
 
         return discovered_devices
+
+    async def _get_firmware_map(self) -> dict[str, str] | None:
+        """Retrieve the latest firmware map for all rointe devices."""
+        firmware_map_response: ApiResponse = await self.hass.async_add_executor_job(
+            self.rointe_api.get_latest_firmware
+        )
+
+        if firmware_map_response and firmware_map_response.success:
+            return firmware_map_response.data
+
+        return None
 
     def _add_or_update_device(
         self, device_data, energy_stats: EnergyConsumptionData, device_id: str
@@ -292,7 +310,6 @@ class RointeDeviceManager:
             device.hass_available = False
             return False
 
-        _LOGGER.info("setting presets")
         # Update the device internal status
         if preset == PRESET_COMFORT:
             device.power = True
