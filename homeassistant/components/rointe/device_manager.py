@@ -6,7 +6,7 @@ from datetime import datetime
 import logging
 from typing import Any
 
-from rointesdk.device import RointeDevice, ScheduleMode
+from rointesdk.device import DeviceFirmware, RointeDevice, ScheduleMode
 from rointesdk.dto import EnergyConsumptionData
 from rointesdk.rointe_api import ApiResponse, RointeAPI
 
@@ -23,6 +23,26 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def determine_latest_firmware(device_data, fw_map) -> str | None:
+    """Determine the latest FW available for a device."""
+
+    product = device_data["data"]["type"]
+    version = device_data["data"]["product_version"]
+
+    if product and version:
+        if product == "radiator":
+            if version == "v2":
+                return fw_map.get(DeviceFirmware.RADIATOR_V2)
+
+            return fw_map.get(DeviceFirmware.RADIATOR_V1)
+
+    _LOGGER.warning(
+        "Unable to determine Rointe latest FW for [%s]:[%s]", product, version
+    )
+
+    return None
 
 
 class RointeDeviceManager:
@@ -74,7 +94,7 @@ class RointeDeviceManager:
 
         installation = installation_response.data
         discovered_devices: dict[str, RointeDevice] = {}
-        firmware_map = self._get_firmware_map()
+        firmware_map = await self._get_firmware_map()
 
         for zone_key in installation["zones"]:
             zone = installation["zones"][zone_key]
@@ -107,15 +127,15 @@ class RointeDeviceManager:
                     else:
                         energy_data = None
 
+                    latest_fw = None
+
                     if firmware_map:
-                        # TODO. Determine DeviceFirmware from data and index map.
-                        pass
+                        latest_fw = determine_latest_firmware(
+                            device_data_response.data, firmware_map
+                        )
 
                     new_devices = self._add_or_update_device(
-                        # TODO. Pass fw data as argument here.
-                        device_data_response.data,
-                        energy_data,
-                        device_id,
+                        device_data_response.data, energy_data, device_id, latest_fw
                     )
 
                     if new_devices:
@@ -142,10 +162,18 @@ class RointeDeviceManager:
         if firmware_map_response and firmware_map_response.success:
             return firmware_map_response.data
 
+        _LOGGER.error(
+            "Unable to fetch Rointe firmware update map: %s",
+            firmware_map_response.error_message,
+        )
         return None
 
     def _add_or_update_device(
-        self, device_data, energy_stats: EnergyConsumptionData, device_id: str
+        self,
+        device_data,
+        energy_stats: EnergyConsumptionData,
+        device_id: str,
+        latest_fw: str | None,
     ) -> list[RointeDevice] | None:
         """Process a device from the API and add or update it.
 
@@ -166,9 +194,9 @@ class RointeDeviceManager:
             if not target_device.hass_available:
                 _LOGGER.info("Restoring device %s", target_device.name)
 
-            target_device.update_data(device_data, energy_stats)
+            target_device.update_data(device_data, energy_stats, latest_fw)
 
-            _LOGGER.debug(
+            _LOGGER.info(
                 "Updating [%s] => Power: %s, Status: %s, Mode: %s, Temp: %s",
                 device_data_data.get("name", "N/A"),
                 target_device.power,
@@ -196,6 +224,7 @@ class RointeDeviceManager:
                     device_info=device_data,
                     device_id=device_id,
                     energy_data=energy_stats,
+                    latest_fw=latest_fw,
                 )
 
                 new_devices.append(rointe_device)

@@ -2197,7 +2197,7 @@ rjpl==0.3.6
 rocketchat-API==0.6.1
 
 # homeassistant.components.rointe
-rointe-sdk==1.0.9b1
+rointe-sdk==1.0.10
 
 # homeassistant.components.roku
 rokuecp==0.17.0

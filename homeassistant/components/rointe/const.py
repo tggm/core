@@ -3,7 +3,7 @@
 DOMAIN = "rointe"
 DEVICE_DOMAIN = "climate"
 ATTRIBUTION = "Data provided by rointeconnect.com"
-PLATFORMS: list[str] = ["climate", "sensor"]
+PLATFORMS: list[str] = ["climate", "sensor", "update"]
 
 
 # Rointe's firebase app values.

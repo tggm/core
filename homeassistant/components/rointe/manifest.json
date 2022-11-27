@@ -3,7 +3,7 @@
   "name": "Rointe Heaters",
   "config_flow": true,
   "documentation": "https://www.home-assistant.io/integrations/rointe",
-  "requirements": ["rointe-sdk==1.0.9b1"],
+  "requirements": ["rointe-sdk==1.0.10"],
   "ssdp": [],
   "zeroconf": [],
   "homekit": {},

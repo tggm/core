@@ -18,10 +18,7 @@ from .device_manager import RointeDevice, RointeDeviceManager
 
 
 class RointeHAEntity(CoordinatorEntity):
-    """Rointe entity base."""
-
-    rointe_device: RointeDevice
-    rointe_device_manager: RointeDeviceManager
+    """Rointe entity base class."""
 
     def __init__(self, coordinator: RointeDataUpdateCoordinator, name, unique_id):
         """Initialize the entity."""

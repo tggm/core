@@ -10,12 +10,34 @@ from homeassistant.components.update import (
     UpdateEntity,
     UpdateEntityDescription,
 )
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+from .const import DOMAIN, ROINTE_COORDINATOR
 from .coordinator import RointeDataUpdateCoordinator
 from .rointe_entity import RointeRadiatorEntity
 
 LOGGER = logging.getLogger(__name__)
+
+
+async def async_setup_entry(
+    hass: HomeAssistant,
+    entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
+    """Set up the radiator sensors from the config entry."""
+    coordinator: RointeDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id][
+        ROINTE_COORDINATOR
+    ]
+
+    # Hook a callback for discovered entities for the update entity.
+    coordinator.add_entities_for_seen_keys(
+        async_add_entities,
+        [RointeUpdateEntity],
+        "update",
+    )
 
 
 class RointeUpdateEntity(RointeRadiatorEntity, UpdateEntity):
@@ -45,9 +67,9 @@ class RointeUpdateEntity(RointeRadiatorEntity, UpdateEntity):
     @property
     def installed_version(self) -> str | None:
         """Version installed and in use."""
-        return self.rointe_device.firmware_version
+        return self._radiator.firmware_version
 
     @property
     def latest_version(self) -> str | None:
         """Latest version available for install."""
-        return "xxx"
+        return self._radiator.latest_firmware_version
