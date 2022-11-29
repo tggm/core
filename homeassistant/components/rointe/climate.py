@@ -69,9 +69,14 @@ class RointeHaClimate(RointeRadiatorEntity, ClimateEntity):
 
         self.entity_description = ClimateEntityDescription(
             key="radiator",
-            name="Radiator",
+            name=radiator.name,
             entity_category=EntityCategory.CONFIG,
         )
+
+    @property
+    def icon(self) -> str | None:
+        """Icon of the entity."""
+        return "mdi:radiator"
 
     @property
     def available(self) -> bool:

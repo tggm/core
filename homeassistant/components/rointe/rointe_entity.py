@@ -67,10 +67,10 @@ class RointeRadiatorEntity(RointeHAEntity):
     def device_info(self) -> DeviceInfo:
         """Return a device description for device registry."""
         return DeviceInfo(
-            identifiers={(DOMAIN, f"{self._radiator.id}")},
+            identifiers={(DOMAIN, self._radiator.id)},
             manufacturer=ROINTE_MANUFACTURER,
             name=self._radiator.name,
-            model=f"{self._radiator.type} {self._radiator.product_version}",
+            model=f"{self._radiator.type.capitalize()} {self._radiator.product_version.capitalize()}",
             sw_version=self._radiator.firmware_version,
         )
 

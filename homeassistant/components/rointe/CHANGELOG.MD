@@ -1,4 +1,14 @@
-# V1.0.10
+Changelog
+---
+
+
+## v1.1.0
+* Improved code documentation
+* Some dead code removed
+* Fixed model name capitalization
+* Added climate icon
+* 
+## V1.0.10
 * Added missing entity descriptors
 * Set the devices as unavailable if communication errors occur.
 * Configure a scan interval.
@@ -6,7 +16,7 @@
 * Bump rointe-sdk to v1.0.9b1
 * Decrease update messages log level and remove excessive error messages.
 
-# V1.0.8
+## V1.0.8
 * Authentication refresh fix.
 * Setting HVAC mode to Auto now sets the temperature to Comfort.
 * Remove excessive logging
