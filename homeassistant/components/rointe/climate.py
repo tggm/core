@@ -42,26 +42,26 @@ SCAN_INTERVAL = timedelta(SCAN_INTERVAL_SECONDS)
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
-    """Initialize all the rointe heaters found via API."""
+    """Set up the radiator climate entity from the config entry."""
     coordinator: RointeDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id][
         ROINTE_COORDINATOR
     ]
 
-    # Hook a callback for discovered entities, for RointeHaClimate entities.
+    # Register the Entity classes and platform on the coordinator.
     coordinator.add_entities_for_seen_keys(
         async_add_entities, [RointeHaClimate], "climate"
     )
 
 
 class RointeHaClimate(RointeRadiatorEntity, ClimateEntity):
-    """Rointe radiator device."""
+    """Climate entity."""
 
     def __init__(
         self,
         radiator: RointeDevice,
         coordinator: RointeDataUpdateCoordinator,
     ) -> None:
-        """Initialize coordinator and Rointe super class."""
+        """Init the Climate entity."""
 
         super().__init__(
             coordinator, radiator, name=radiator.name, unique_id=radiator.id
@@ -148,7 +148,7 @@ class RointeHaClimate(RointeRadiatorEntity, ClimateEntity):
     @property
     def hvac_modes(self) -> list[str]:
         """Return hvac modes available."""
-        return [HVACMode.OFF, HVACMode.HEAT, HVACMode.HEAT]
+        return [HVACMode.OFF, HVACMode.HEAT, HVACMode.AUTO]
 
     @property
     def preset_modes(self) -> list[str]:

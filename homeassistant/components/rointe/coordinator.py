@@ -59,11 +59,11 @@ class RointeDataUpdateCoordinator(DataUpdateCoordinator[dict[str, RointeDevice]]
         entity_constructor_list: list[Any],
         platform: str,
     ) -> None:
-        """Add entities for new devices."""
+        """Add entities for new devices, for a given platform."""
 
         @callback
         def _add_entities_for_unregistered_keys() -> None:
-            """Add entities for keys seen for the first time."""
+            """Handle creating new entities."""
             new_entities: list = []
             discovered_devices: dict[str, RointeDevice] = self.data
 
@@ -80,9 +80,11 @@ class RointeDataUpdateCoordinator(DataUpdateCoordinator[dict[str, RointeDevice]]
 
         # End callback.
 
+        # Add entities for keys seen for the first time.
         _add_entities_for_unregistered_keys()
 
-        # The inner callback is called by the coordinator after update.
+        # The inner callback is called by the coordinator after the update.
+        # The callback captures the outer method argument values.
         self.cleanup_callbacks.append(
             self.async_add_listener(_add_entities_for_unregistered_keys)
         )

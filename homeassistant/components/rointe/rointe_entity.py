@@ -1,4 +1,4 @@
-"""Rointe HA base entity."""
+"""Rointe devices entity model."""
 from __future__ import annotations
 
 from homeassistant.const import ATTR_ATTRIBUTION
@@ -49,7 +49,7 @@ class RointeHAEntity(CoordinatorEntity):
 
 
 class RointeRadiatorEntity(RointeHAEntity):
-    """Base class for Rointe entities (climate and sensors)."""
+    """Base class for entities that support a Radiator device (climate and sensors)."""
 
     def __init__(
         self,
@@ -59,7 +59,6 @@ class RointeRadiatorEntity(RointeHAEntity):
         unique_id: str,
     ) -> None:
         """Initialize the entity."""
-
         super().__init__(coordinator, name, unique_id)
         self._radiator = radiator
         self._signal_update = None
@@ -77,7 +76,6 @@ class RointeRadiatorEntity(RointeHAEntity):
 
     async def async_added_to_hass(self):
         """Listen for signals for services."""
-
         self.async_on_remove(
             async_dispatcher_connect(
                 self.hass,

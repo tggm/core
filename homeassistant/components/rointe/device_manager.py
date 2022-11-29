@@ -28,15 +28,35 @@ _LOGGER = logging.getLogger(__name__)
 def determine_latest_firmware(device_data, fw_map) -> str | None:
     """Determine the latest FW available for a device."""
 
-    product = device_data["data"]["type"]
-    version = device_data["data"]["product_version"]
+    if not device_data or "data" not in device_data:
+        return None
 
-    if product and version:
-        if product == "radiator":
-            if version == "v2":
-                return fw_map.get(DeviceFirmware.RADIATOR_V2)
+    product = device_data["data"].get("type", None)
+    version = device_data["data"].get("product_version", None)
 
-            return fw_map.get(DeviceFirmware.RADIATOR_V1)
+    if not product or not version:
+        return None
+
+    if product == "radiator":
+        if version == "v2":
+            return fw_map.get(DeviceFirmware.RADIATOR_V2)
+
+        return fw_map.get(DeviceFirmware.RADIATOR_V1)
+
+    if product == "towel":
+        if version == "v2":
+            return fw_map.get(DeviceFirmware.TOWEL_RAIL_V2)
+
+        return fw_map.get(DeviceFirmware.TOWEL_RAIL_V1)
+
+    if product == "acs":
+        if version == "v2":
+            return fw_map.get(DeviceFirmware.WATER_HEATER_V2)
+
+        return fw_map.get(DeviceFirmware.WATER_HEATER_V1)
+
+    if product == "therm" and version == "v2":
+        return fw_map.get(DeviceFirmware.THERMO_V2)
 
     _LOGGER.warning(
         "Unable to determine Rointe latest FW for [%s]:[%s]", product, version
