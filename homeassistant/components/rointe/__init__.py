@@ -50,6 +50,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.data[DOMAIN][entry.entry_id][ROINTE_API_MANAGER] = rointe_api
         hass.data[DOMAIN][entry.entry_id][ROINTE_COORDINATOR] = rointe_coordinator
 
+        await rointe_coordinator.async_config_entry_first_refresh()
+        await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
         return True
 
 
@@ -58,10 +61,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
     if unload_ok:
-        rointe_data = hass.data[DOMAIN].pop(entry.entry_id)
-
-        while rointe_data[ROINTE_COORDINATOR].cleanup_callbacks:
-            rointe_data[ROINTE_COORDINATOR].cleanup_callbacks.pop()()
+        hass.data[DOMAIN].pop(entry.entry_id)
 
     return unload_ok
 
@@ -94,11 +94,5 @@ async def init_device_manager(
 
     LOGGER.debug("Device manager: Initializing Data Coordinator")
     rointe_coordinator = RointeDataUpdateCoordinator(hass, rointe_device_manager)
-
-    LOGGER.debug("Device manager: Calling first refresh")
-    await rointe_coordinator.async_config_entry_first_refresh()
-
-    LOGGER.debug("Device manager: Setting up platforms")
-    hass.config_entries.async_setup_platforms(entry, PLATFORMS)
 
     return rointe_device_manager, rointe_api, rointe_coordinator

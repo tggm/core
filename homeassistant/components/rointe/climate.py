@@ -41,8 +41,6 @@ async def async_setup_entry(
         ROINTE_COORDINATOR
     ]
 
-    LOGGER.debug("Climate Platform: Async setup entry")
-
     # Register the Entity classes and platform on the coordinator.
     coordinator.add_entities_for_seen_keys(
         async_add_entities, [RointeHaClimate], "climate"

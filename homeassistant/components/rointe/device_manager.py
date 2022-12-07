@@ -63,8 +63,6 @@ def determine_latest_firmware(device_data, fw_map) -> str | None:
 class RointeDeviceManager:
     """Device Manager."""
 
-    rointe_devices: dict[str, RointeDevice] = {}
-
     def __init__(
         self,
         username: str,
@@ -84,6 +82,8 @@ class RointeDeviceManager:
         self.hass = hass
         self.auth_token = None
         self.auth_token_expire_date: datetime | None = None
+
+        self.rointe_devices: dict[str, RointeDevice] = {}
 
     def _fail_all_devices(self):
         """Set all devices as unavailable."""
@@ -232,6 +232,7 @@ class RointeDeviceManager:
             )
         else:
             # New device.
+
             try:
                 device_type = device_data["data"]["type"]
 

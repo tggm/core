@@ -1,7 +1,6 @@
 """Provides the Rointe DataUpdateCoordinator."""
 from __future__ import annotations
 
-from collections.abc import Callable
 from datetime import timedelta
 from typing import Any
 
@@ -25,7 +24,6 @@ class RointeDataUpdateCoordinator(DataUpdateCoordinator[dict[str, RointeDevice]]
         """Initialize Rointe data updater."""
         self.device_manager = device_manager
         self.unregistered_keys: dict[str, dict[str, RointeDevice]] = {}
-        self.cleanup_callbacks: list[Callable[[], None]] = []
 
         super().__init__(
             hass,
@@ -93,12 +91,6 @@ class RointeDataUpdateCoordinator(DataUpdateCoordinator[dict[str, RointeDevice]]
 
         # Add entities for keys seen for the first time.
         _add_entities_for_unregistered_keys()
-
-        # The inner callback is called by the coordinator after the update.
-        # The callback captures the outer method argument values.
-        self.cleanup_callbacks.append(
-            self.async_add_listener(_add_entities_for_unregistered_keys)
-        )
 
 
 @callback
