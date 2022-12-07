@@ -76,9 +76,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         local_id = local_id_response.data
 
-        await self.async_set_unique_id(local_id)
-        self._abort_if_unique_id_configured()
-
         installations_response = await self.hass.async_add_executor_job(
             rointe_api.get_installations, local_id
         )
@@ -121,6 +118,10 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         assert self.step_user_data is not None
         assert self.step_user_installations is not None
+
+        # check if this installation has already been added.
+        await self.async_set_unique_id(user_input[CONF_INSTALLATION])
+        self._abort_if_unique_id_configured()
 
         user_data = {
             CONF_INSTALLATION: user_input[CONF_INSTALLATION],
