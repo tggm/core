@@ -6,7 +6,7 @@ LOGGER = logging.getLogger(__package__)
 
 DOMAIN = "rointe"
 DEVICE_DOMAIN = "climate"
-PLATFORMS: list[str] = ["climate", "sensor", "update"]
+PLATFORMS: list[str] = ["climate", "sensor", "update", "number"]
 
 CONF_USERNAME = "rointe_username"
 CONF_PASSWORD = "rointe_password"
@@ -28,6 +28,10 @@ CMD_SET_TEMP = "cmd_set_temp"
 CMD_SET_PRESET = "cmd_set_preset"
 CMD_HVAC_OFF = "cmd_turn_off"
 CMD_SET_HVAC_MODE = "cmd_set_hvac_mode"
+CMD_SET_ECO_PRESET = "cmd_set_eco_preset"
+CMD_SET_COMFORT_PRESET = "cmd_set_comfort_preset"
+CMD_SET_SCREEN_OPTIONS = "cmd_set_screen_options"
+
 
 RADIATOR_DEFAULT_TEMPERATURE = 20
 

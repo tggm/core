@@ -13,8 +13,11 @@ from homeassistant.components.climate import PRESET_COMFORT, PRESET_ECO
 from homeassistant.core import HomeAssistant
 
 from .const import (
+    CMD_SET_COMFORT_PRESET,
+    CMD_SET_ECO_PRESET,
     CMD_SET_HVAC_MODE,
     CMD_SET_PRESET,
+    CMD_SET_SCREEN_OPTIONS,
     CMD_SET_TEMP,
     LOGGER,
     PRESET_ROINTE_ICE,
@@ -262,7 +265,7 @@ class RointeDeviceManager:
 
         return new_devices
 
-    async def send_command(self, device: RointeDevice, command: str, arg) -> bool:
+    async def send_command(self, device: RointeDevice, command: str, arg=None) -> bool:
         """Send command to the device."""
 
         LOGGER.debug("Sending command [%s] to device ID [%s]", command, device.id)
@@ -275,6 +278,15 @@ class RointeDeviceManager:
 
         if command == CMD_SET_HVAC_MODE:
             return await self._set_device_mode(device, arg)
+
+        if command == CMD_SET_ECO_PRESET:
+            return await self._set_eco_preset_temp(device, arg)
+
+        if command == CMD_SET_COMFORT_PRESET:
+            return await self._set_comfort_preset_temp(device, arg)
+
+        if command == CMD_SET_SCREEN_OPTIONS:
+            return await self._set_screen_options(device)
 
         LOGGER.warning("Ignoring unsupported command: %s", command)
         return False
@@ -379,5 +391,61 @@ class RointeDeviceManager:
             device.power = True
             device.mode = "manual"
             device.preset = "ice"
+
+        return True
+
+    async def _set_comfort_preset_temp(self, device: RointeDevice, new_value: float):
+        result = await self.hass.async_add_executor_job(
+            self.rointe_api.set_device_comfort_temp_preset, device, new_value
+        )
+
+        if not result.success:
+            # Set the device as unavailable.
+            device.hass_available = False
+            return False
+
+        # Update the device internal status
+        device.comfort_temp = new_value
+
+        # If the device is in Comfort mode then we need to also set the new temperature.
+        if device.power and device.preset == "comfort":
+            device.temp = new_value
+
+        return True
+
+    async def _set_eco_preset_temp(self, device: RointeDevice, new_value: float):
+        result = await self.hass.async_add_executor_job(
+            self.rointe_api.set_device_eco_temp_preset, device, new_value
+        )
+
+        if not result.success:
+            # Set the device as unavailable.
+            device.hass_available = False
+            return False
+
+        # Update the device internal status
+        device.eco_temp = new_value
+
+        # If the device is in ECO mode then we need to also set the new temperature.
+        if device.power and device.preset == "eco":
+            device.temp = new_value
+
+        return True
+
+    async def _set_screen_options(self, device: RointeDevice):
+        """Set the radiator's screen options."""
+
+        result = await self.hass.async_add_executor_job(
+            self.rointe_api.set_screen_options,
+            device.id,
+            device.brightness_on,
+            device.brightness_standby,
+            device.screen_color_hex,
+        )
+
+        if not result.success:
+            # Set the device as unavailable.
+            device.hass_available = False
+            return False
 
         return True
