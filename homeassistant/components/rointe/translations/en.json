@@ -10,17 +10,9 @@
         "step": {
             "user": {
                 "data": {
-                    "rointe_password": "Password",
-                    "rointe_username": "Username"
-                },
-                "title": "Connect to Rointe Connect"
-
-            },
-            "installation": {
-                "data": {
-                    "rointe_installation": "Installations"
-                },
-                "title":"Select installation"
+                    "password": "Password",
+                    "username": "Username"
+                }
             }
         }
     }
