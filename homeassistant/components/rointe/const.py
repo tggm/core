@@ -34,6 +34,7 @@ class RointePreset(StrEnum):
     COMFORT = "comfort"
     ICE = "ice"
     NONE = "none"
+    OFF = "off"
 
 
 class RointeCommand(StrEnum):
