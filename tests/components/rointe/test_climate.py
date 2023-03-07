@@ -170,7 +170,6 @@ async def test_climate_set_preset_eco(hass: HomeAssistant) -> None:
     with patch.object(
         sys.modules["homeassistant.components.rointe"], "RointeAPI"
     ) as mock_rointe_api:
-
         instance_mock = get_initial_device_data_mock()
         mock_rointe_api.return_value = instance_mock
 

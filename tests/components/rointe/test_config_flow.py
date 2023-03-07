@@ -99,7 +99,6 @@ async def test_invalid_installations(hass, setup_rointe_login_ok):
             False, LOCAL_ID, "No response from API in get_installations()"
         ),
     ):
-
         result2 = await hass.config_entries.flow.async_configure(
             result["flow_id"],
             {CONF_USERNAME: USERNAME, CONF_PASSWORD: PASSWORD},

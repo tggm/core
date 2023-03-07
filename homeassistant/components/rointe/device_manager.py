@@ -244,7 +244,6 @@ class RointeDeviceManager:
 
         # Existing device, update it.
         if device_id in self.rointe_devices:
-
             target_device = self.rointe_devices[device_id]
 
             if not target_device.hass_available:
