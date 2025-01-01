@@ -84,7 +84,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Select the installation."""
-        if not user_input or CONF_INSTALLATION not in user_input:
+        if not user_input:
             return self.async_show_form(
                 step_id="installation",
                 data_schema=vol.Schema(
